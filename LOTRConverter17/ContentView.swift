@@ -17,6 +17,7 @@ struct ContentView: View {
             Image(.background)
                 .resizable()
                 .ignoresSafeArea()
+            
             VStack {
                 Image(.prancingpony)
                     .resizable()
@@ -86,6 +87,9 @@ struct ContentView: View {
                             .foregroundStyle(.white)
                     }
                     .padding(.trailing)
+                    .sheet(isPresented: $showExchangeInfo) {
+                        ExchangeInfo()
+                    }
                 }
             }
 //            .border(.blue)
