@@ -7,9 +7,11 @@
 
 import SwiftUI
 
-struct SelectCurrnecy: View {
+struct SelectCurrency: View {
     @Environment(\.dismiss) var dismiss
-
+    @State var topCurrecny: Currency = .goldPiece
+    @State var bottomCurrecny: Currency = .copperPenny
+    
     var body: some View {
         ZStack {
             Image(.parchment)
@@ -20,22 +22,16 @@ struct SelectCurrnecy: View {
             VStack {
                 Text("Select the currency you are starting with:")
                     .fontWeight(.bold)
-                LazyVGrid(columns: [GridItem(), GridItem(), GridItem()]){
-                    ForEach(0..<5) { _ in
-                        
-                    }
-//                    CurrencyIcon(currencyImage: .goldpiece, currencyName: "Gold piece")
-//                    CurrencyIcon(currencyImage: .goldpenny, currencyName: "Gold penny")
-//                    CurrencyIcon(currencyImage: .silverpiece, currencyName: "Silver piece")
-//                    CurrencyIcon(currencyImage: .silverpenny, currencyName: "Silver penny")
-//                    CurrencyIcon(currencyImage: .copperpenny, currencyName: "Copper penny")
-                }
-
+                
+                IconGrid(currency: topCurrecny)
                 
                 Text("Select the currency you wpould like to convert to:")
                     .fontWeight(.bold)
                 
+                IconGrid(currency: bottomCurrecny)
+                
                 Button("Done") {
+                    
                     dismiss()
                 }
                 .buttonStyle(.borderedProminent)
@@ -51,5 +47,5 @@ struct SelectCurrnecy: View {
 }
 
 #Preview {
-    SelectCurrnecy()
+    SelectCurrency()
 }
