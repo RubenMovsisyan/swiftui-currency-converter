@@ -22,6 +22,11 @@ struct ContentView: View {
     
     @State var rightCurrency = Currency(rawValue: UserDefaults.standard.value(forKey: "rightCurrency") as? Double ?? 4)!
     
+    func removeTextFieldFocus() {
+        leftTyping = false
+        rightTyping = false
+    }
+    
     var body: some View {
         ZStack {
             Image(.background)
@@ -45,7 +50,7 @@ struct ContentView: View {
                             Image(leftCurrency.image)
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 33)
+                                .frame(height: 33)
                             
                             Text(leftCurrency.name)
                                 .font(.headline)
@@ -54,6 +59,7 @@ struct ContentView: View {
                         .padding(.bottom, -5)
                         .onTapGesture {
                             showSelectCurrency.toggle()
+                            removeTextFieldFocus()
                         }
                         .popoverTip(CurrencyTip(), arrowEdge: .bottom)
                         
@@ -77,7 +83,7 @@ struct ContentView: View {
                             Image(rightCurrency.image)
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 33)
+                                .frame(height: 33)
                         }
                         .padding(.bottom,  -5)
                         .onTapGesture {
@@ -102,6 +108,7 @@ struct ContentView: View {
                     
                     Button {
                         showExchangeInfo.toggle()
+                        removeTextFieldFocus()
                     } label: {
                         Image(systemName: "info.circle.fill")
                             .font(.largeTitle)
@@ -110,35 +117,37 @@ struct ContentView: View {
                     .padding(.trailing)
                 }
             }
-            .task {
-                try? Tips.configure()
-            }
-            .onChange(of: leftAmount) {
-                if leftTyping {
-                    rightAmount = leftCurrency.convert(leftAmount, to: rightCurrency)
-                }
-            }
-            .onChange(of: rightAmount) {
-                if rightTyping {
-                    leftAmount = rightCurrency.convert(rightAmount, to: leftCurrency)
-                }
-            }
-            .onChange(of: rightCurrency) {
+        }
+        .task {
+            try? Tips.configure()
+        }
+        .onTapGesture {
+            removeTextFieldFocus()
+        }
+        .onChange(of: leftAmount) {
+            if leftTyping {
                 rightAmount = leftCurrency.convert(leftAmount, to: rightCurrency)
-                UserDefaults.standard.set(rightCurrency.rawValue, forKey: "rightCurrency")
             }
-            .onChange(of: leftCurrency) {
+        }
+        .onChange(of: rightAmount) {
+            if rightTyping {
                 leftAmount = rightCurrency.convert(rightAmount, to: leftCurrency)
-                UserDefaults.standard.set(leftCurrency.rawValue, forKey: "leftCurrency")
             }
-            .sheet(isPresented: $showExchangeInfo) {
-                ExchangeInfo()
-            }
-            .sheet(isPresented: $showSelectCurrency) {
-                SelectCurrency(topCurrecny: $leftCurrency, 
-                               bottomCurrecny: $rightCurrency)
-            }
-//            .border(.blue)
+        }
+        .onChange(of: rightCurrency) {
+            rightAmount = leftCurrency.convert(leftAmount, to: rightCurrency)
+            UserDefaults.standard.set(rightCurrency.rawValue, forKey: "rightCurrency")
+        }
+        .onChange(of: leftCurrency) {
+            leftAmount = rightCurrency.convert(rightAmount, to: leftCurrency)
+            UserDefaults.standard.set(leftCurrency.rawValue, forKey: "leftCurrency")
+        }
+        .sheet(isPresented: $showExchangeInfo) {
+            ExchangeInfo()
+        }
+        .sheet(isPresented: $showSelectCurrency) {
+            SelectCurrency(topCurrecny: $leftCurrency,
+                           bottomCurrecny: $rightCurrency)
         }
     }
 }
