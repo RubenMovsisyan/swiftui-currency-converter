@@ -18,8 +18,9 @@ struct ContentView: View {
     @FocusState var leftTyping
     @FocusState var rightTyping
     
-    @State var leftCurrency: Currency = .silverPiece
-    @State var rightCurrency: Currency = .goldPiece
+    @State var leftCurrency = Currency(rawValue: UserDefaults.standard.value(forKey: "leftCurrency") as? Double ?? 16)!
+    
+    @State var rightCurrency = Currency(rawValue: UserDefaults.standard.value(forKey: "rightCurrency") as? Double ?? 4)!
     
     var body: some View {
         ZStack {
@@ -124,9 +125,11 @@ struct ContentView: View {
             }
             .onChange(of: rightCurrency) {
                 rightAmount = leftCurrency.convert(leftAmount, to: rightCurrency)
+                UserDefaults.standard.set(rightCurrency.rawValue, forKey: "rightCurrency")
             }
             .onChange(of: leftCurrency) {
                 leftAmount = rightCurrency.convert(rightAmount, to: leftCurrency)
+                UserDefaults.standard.set(leftCurrency.rawValue, forKey: "leftCurrency")
             }
             .sheet(isPresented: $showExchangeInfo) {
                 ExchangeInfo()
