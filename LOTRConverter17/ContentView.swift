@@ -45,57 +45,20 @@ struct ContentView: View {
                     .foregroundStyle(.white)
                 
                 HStack {
-                    VStack {
-                        HStack {
-                            Image(leftCurrency.image)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 33)
-                            
-                            Text(leftCurrency.name)
-                                .font(.headline)
-                                .foregroundStyle(.white)
-                        }
-                        .padding(.bottom, -5)
-                        .onTapGesture {
-                            showSelectCurrency.toggle()
-                            removeTextFieldFocus()
-                        }
-                        .popoverTip(CurrencyTip(), arrowEdge: .bottom)
-                        
-                        TextField( "Amount", text: $leftAmount)
-                            .textFieldStyle(.roundedBorder)
-                            .focused($leftTyping)
-                            .keyboardType(.decimalPad)
-                     }
+                    CurrencyConversionView(currency: $leftCurrency,
+                                           showSelectCurrency: $showSelectCurrency,
+                                           leftAmount: $leftAmount,
+                                           isTyping: _leftTyping)
                     
                     Image(systemName: "equal")
                         .font(.largeTitle)
                         .foregroundStyle(.white)
                         .symbolEffect(.pulse)
                     
-                    VStack {
-                        HStack {
-                            Text(rightCurrency.name)
-                                .font(.headline)
-                                .foregroundStyle(.white)
-                            
-                            Image(rightCurrency.image)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 33)
-                        }
-                        .padding(.bottom,  -5)
-                        .onTapGesture {
-                            showSelectCurrency.toggle()
-                        }
-                        
-                        TextField( "Amount", text: $rightAmount)
-                            .textFieldStyle(.roundedBorder)
-                            .multilineTextAlignment(.trailing)
-                            .focused($rightTyping)
-                            .keyboardType(.decimalPad)
-                    }
+                    CurrencyConversionView(currency: $rightCurrency,
+                                           showSelectCurrency: $showSelectCurrency,
+                                           leftAmount: $rightAmount,
+                                           isTyping: _rightTyping)
                 }
                 .padding()
                 .background(.black.opacity(0.5))
